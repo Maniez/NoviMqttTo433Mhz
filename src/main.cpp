@@ -1,6 +1,9 @@
 #include <Homie.h>
 #include "codesend.hpp"
 #include <ArduinoOTA.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
+#include <WiFiUdp.h>
 
 HomieNode abzugshaubeNode("Abzug", "Abzugshaube", "switch");
 NovyControl NovyAbzugshaube;
@@ -136,6 +139,8 @@ void setup() {
     abzugshaubeNode.advertise("ambientlight").setRetained(true).setName("Lighttoggle").setDatatype("boolean").settable(switchAmbientlightHandler);
     abzugshaubeNode.advertise("light").setName("Lighttoggle").setRetained(true).setDatatype("boolean").settable(switchLightHandler);  
 
+    Homie.setup();
+
     ArduinoOTA.onStart([]() {
     Serial.println("Start");
     });
@@ -154,12 +159,10 @@ void setup() {
       else if (error == OTA_END_ERROR) Serial.println("End Failed");
     });
     ArduinoOTA.begin(); 
-
-    Homie.setup();
 }
 
 void loop() {
 // put your main code here, to run repeatedly:
-    Homie.loop();
     ArduinoOTA.handle();
+    Homie.loop();
 }
